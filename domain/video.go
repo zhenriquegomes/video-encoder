@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/asaskevich/govalidator"
+	"github.com/google/uuid"
 )
 
 type Video struct {
@@ -17,8 +18,22 @@ func init() {
 	govalidator.SetFieldsRequiredByDefault(true)
 }
 
-func NewVideo() *Video {
-	return &Video{}
+func NewVideo(resouceID string, filePath string) (*Video, error) {
+	video := Video{
+		ResourceID: resouceID,
+		FilePath:   filePath,
+	}
+	video.prepare()
+	err := video.Validade()
+	if err != nil {
+		return nil, err
+	}
+	return &video, nil
+}
+
+func (video *Video) prepare() {
+	video.ID = uuid.NewString()
+	video.CreatedAt = time.Now()
 }
 
 func (video *Video) Validade() error {
